@@ -1,5 +1,6 @@
 ﻿using dotNES.Controllers;
 using dotNES.Renderers;
+using dotNES.Settings;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,7 +16,7 @@ namespace dotNES
     {
         private bool _rendererRunning = true;
         private Thread _renderThread;
-        private IController _controller = new NES001Controller();
+        private IController _controller1, _controller2;
 
         public const int GameWidth = 256;
         public const int GameHeight = 240;
@@ -67,9 +68,16 @@ namespace dotNES
         public UI()
         {
             InitializeComponent();
+            InitializeInput();
 
             FindRenderers();
             SetRenderer(availableRenderers.Last());
+        }
+
+        private void InitializeInput()
+        {
+            _controller1 = new NES001Controller(KeySet.Default1);
+            _controller2 = new NES001Controller(KeySet.Default2);
         }
 
         //hardcoded controlls
@@ -119,7 +127,7 @@ namespace dotNES
 
         private void BootCartridge(string rom)
         {
-            emu = new Emulator(rom, _controller);
+            emu = new Emulator(rom, _controller1, _controller2);
             _renderThread = new Thread(() =>
             {
                 gameStarted = true;
@@ -194,14 +202,16 @@ namespace dotNES
                     suspended = true;
                     break;
                 default:
-                    _controller.PressKey(e);
+                    _controller1.PressKey(e);
+                    _controller2.PressKey(e);
                     break;
             }
         }
 
         private void UI_KeyUp(object sender, KeyEventArgs e)
         {
-            _controller.ReleaseKey(e);
+            _controller1.ReleaseKey(e);
+            _controller2.ReleaseKey(e);
         }
 
         private void UI_MouseClick(object sender, MouseEventArgs e)

@@ -14,7 +14,8 @@ namespace dotNES
                     _emulator.PPU.PerformDMA(val);
                     break;
                 case 0x4016:
-                    _emulator.Controller.Strobe(val == 1);
+                    _emulator.Controller1.Strobe(val == 1);
+                    _emulator.Controller2.Strobe(val == 1);
                     break;
             }
             if (reg <= 0x401F) return; // APU write
@@ -26,7 +27,10 @@ namespace dotNES
             switch (reg)
             {
                 case 0x4016:
-                    return (uint)_emulator.Controller.ReadState() & 0x1;
+                    return (uint)_emulator.Controller1.ReadState() & 0x1;
+
+                case 0x4017:
+                    return (uint)_emulator.Controller2.ReadState() & 0x1;
             }
             return 0x00;
             

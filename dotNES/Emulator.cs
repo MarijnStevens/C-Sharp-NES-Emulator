@@ -18,7 +18,7 @@ namespace dotNES
                                                                                           select new { def, type }).ToDictionary(a => a.def.Id, a => new KeyValuePair<Type, MapperDef>(a.type, a.def));
 
         //seting definitions for the controller, CPU, PPU, among others
-        public IController Controller;
+        public IController Controller1, Controller2;
 
         public readonly CPU CPU;
 
@@ -30,7 +30,7 @@ namespace dotNES
 
         private readonly string _path;
 
-        public Emulator(string path, IController controller)
+        public Emulator(string path, IController portA, IController portB)
         {
             _path = path;
             Cartridge = new Cartridge(path);
@@ -39,7 +39,8 @@ namespace dotNES
             Mapper = (BaseMapper)Activator.CreateInstance(Mappers[Cartridge.MapperNumber].Key, this);
             CPU = new CPU(this);
             PPU = new PPU(this);
-            Controller = controller;
+            Controller1 = portA;
+            Controller2 = portB;
 
             Load();
         }

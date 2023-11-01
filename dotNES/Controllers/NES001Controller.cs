@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using dotNES;
+using dotNES.Settings;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
-//Hardcoding control interface to A/S for A/B and the arrow keys as well as the enter key for start and the right shift key for select
 namespace dotNES.Controllers
 {
     class NES001Controller : IController
@@ -9,22 +10,12 @@ namespace dotNES.Controllers
         private int data;
         private int serialData;
         private bool strobing;
+        private KeySet keyset;
 
-        public bool debug;
-        // bit:   	 7     6     5     4     3     2     1     0
-        // button:	 A B  Select Start  Up Down  Left 
-
-        private readonly Dictionary<Keys, int> _keyMapping = new Dictionary<Keys, int>
+        public NES001Controller(KeySet set)
         {
-            {Keys.A, 7},
-            {Keys.S, 6},
-            {Keys.RShiftKey, 5},
-            {Keys.Enter, 4},
-            {Keys.Up, 3},
-            {Keys.Down, 2},
-            {Keys.Left, 1},
-            {Keys.Right, 0},
-        };
+            keyset = set;
+        }
 
         public void Strobe(bool on)
         {
@@ -45,15 +36,21 @@ namespace dotNES.Controllers
 
         public void PressKey(KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.P) debug ^= true;
-            if (!_keyMapping.ContainsKey(e.KeyCode)) return;
-            data |= 1 << _keyMapping[e.KeyCode];
+            var key = keyset[e.KeyCode];
+            if (key >= 0)
+            {
+                data |= 1 << key;
+            }
         }
 
         public void ReleaseKey(KeyEventArgs e)
         {
-            if (!_keyMapping.ContainsKey(e.KeyCode)) return;
-            data &= ~(1 << _keyMapping[e.KeyCode]);
+
+            var key = keyset[e.KeyCode];
+            if (key >= 0)
+            {
+                data &= ~(1 << key);
+            }
         }
     }
 }
