@@ -1,6 +1,4 @@
-﻿using System.Windows.Forms;
-
-//set interface for controller
+﻿//set interface for controller
 namespace dotNES.Controllers
 {
     interface IController
@@ -9,8 +7,8 @@ namespace dotNES.Controllers
 
         int ReadState();
 
-        void PressKey(KeyEventArgs e);
+        void PressKey(int keyCode);
 
-        void ReleaseKey(KeyEventArgs e);
+        void ReleaseKey(int keyCode);
     }
 }

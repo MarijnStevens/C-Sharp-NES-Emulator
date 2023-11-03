@@ -117,6 +117,7 @@
     <Compile Include="Mappers\GxROM.cs" />
     <Compile Include="Mappers\Jaleco.cs" />
     <Compile Include="Mappers\Nina003006.cs" />
+    <Compile Include="Renderers\RenderData.cs" />
     <Compile Include="Renderers\OpenGLRenderer.cs">
       <SubType>UserControl</SubType>
     </Compile>

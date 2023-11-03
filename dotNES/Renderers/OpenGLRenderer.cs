@@ -6,7 +6,7 @@ namespace dotNES.Renderers
 {
     class OpenGLRenderer : GlControl, IRenderer
     {
-        private UI _ui;
+        private RenderData _renderData;
         private uint _textureId;
         private readonly Object _drawLock = new Object();
 
@@ -37,7 +37,7 @@ namespace dotNES.Renderers
                 Gl.ClearColor(Color.Gray.R / 255.0f, Color.Gray.G / 255.0f, Color.Gray.B / 255.0f, 0);
                 Gl.Clear(ClearBufferMask.ColorBufferBit);
 
-                if (_ui.gameStarted)
+                if (_renderData.gameStarted)
                 {
                     Gl.MatrixMode(MatrixMode.Projection);
                     Gl.LoadIdentity();
@@ -48,14 +48,14 @@ namespace dotNES.Renderers
 
                     Gl.BindTexture(TextureTarget.Texture2d, _textureId);
 
-                    using (MemoryLock locked = new MemoryLock(_ui.rawBitmap))
+                    using (MemoryLock locked = new MemoryLock(_renderData.rawBitmap))
                     {
-                        Gl.TexImage2D(TextureTarget.Texture2d, 0, InternalFormat.Rgba, UI.GameWidth, UI.GameHeight, 0,
+                        Gl.TexImage2D(TextureTarget.Texture2d, 0, InternalFormat.Rgba, RenderData.GameWidth, RenderData.GameHeight, 0,
                             PixelFormat.Bgra, PixelType.UnsignedByte, locked.Address);
                     }
 
                     Gl.TextureParameterEXT(_textureId, TextureTarget.Texture2d, TextureParameterName.TextureMagFilter,
-                        _ui._filterMode == UI.FilterMode.Linear ? Gl.LINEAR : Gl.NEAREST);
+                        _renderData._filterMode == RenderData.FilterMode.Linear ? Gl.LINEAR : Gl.NEAREST);
 
                     Gl.Begin(PrimitiveType.Quads);
                     Gl.TexCoord2(0, 1);
@@ -71,12 +71,13 @@ namespace dotNES.Renderers
             }
         }
 
-        public void InitRendering(UI ui)
+        public void InitRendering(RenderData renderData)
         {
-            if (ui == null) return;
-            _ui = ui;
+            if (renderData == null) return;
+            _renderData = renderData;
+
             ResizeRedraw = true;
-            _ui.ready = true;
+            _renderData.ready = true;
         }
 
         public void EndRendering()
@@ -86,13 +87,13 @@ namespace dotNES.Renderers
 
         protected override void OnResize(EventArgs e)
         {
-            InitRendering(_ui);
+            InitRendering(_renderData);
             base.OnResize(e);
         }
 
         public void Draw()
         {
-            if (_ui == null || !_ui.ready) return;
+            if (_renderData == null || !_renderData.ready) return;
             Invalidate();
             Update();
         }

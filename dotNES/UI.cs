@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Threading;
+
 using System.Windows.Forms;
 
 namespace dotNES
@@ -18,18 +19,7 @@ namespace dotNES
         private Thread _renderThread;
         private IController _controller1, _controller2;
 
-        public const int GameWidth = 256;
-        public const int GameHeight = 240;
-        public uint[] rawBitmap = new uint[GameWidth * GameHeight];
-        public bool ready;
-        public IRenderer _renderer;
-
-        public enum FilterMode
-        {
-            NearestNeighbor, Linear
-        }
-
-        public FilterMode _filterMode = FilterMode.Linear;
+        public RenderData _renderData = new RenderData();
 
         class SeparatorItem : MenuItem
         {
@@ -60,7 +50,6 @@ namespace dotNES
         private string activeSize = "2x";
         private Emulator emu;
         private bool suspended;
-        public bool gameStarted;
 
         private Type[] possibleRenderers = { typeof(SoftwareRenderer), typeof(Direct3DRenderer) };
         private List<IRenderer> availableRenderers = new List<IRenderer>();
@@ -83,19 +72,19 @@ namespace dotNES
         //hardcoded controlls
         private void SetRenderer(IRenderer renderer)
         {
-            if (_renderer == renderer) return;
+            if (_renderData._renderer == renderer) return;
 
-            if (_renderer != null)
+            if (_renderData._renderer != null)
             {
                 var oldCtrl = (Control)renderer;
                 oldCtrl.MouseClick -= UI_MouseClick;
                 oldCtrl.KeyUp -= UI_KeyUp;
                 oldCtrl.KeyDown -= UI_KeyDown;
                 oldCtrl.PreviewKeyDown -= UI_PreviewKeyDown;
-                _renderer.EndRendering();
-                Controls.Remove((Control)_renderer);
+                _renderData._renderer.EndRendering();
+                Controls.Remove((Control)_renderData._renderer);
             }
-            _renderer = renderer;
+            _renderData._renderer = renderer;
             var ctrl = (Control)renderer;
             ctrl.Dock = DockStyle.Fill;
             ctrl.TabStop = false;
@@ -104,7 +93,7 @@ namespace dotNES
             ctrl.KeyDown += UI_KeyDown;
             ctrl.PreviewKeyDown += UI_PreviewKeyDown;
             Controls.Add(ctrl);
-            renderer.InitRendering(this);
+            renderer.InitRendering(_renderData);
         }
 
         private void FindRenderers()
@@ -114,7 +103,7 @@ namespace dotNES
                 try
                 {
                     var renderer = (IRenderer)Activator.CreateInstance(renderType);
-                    renderer.InitRendering(this);
+                    renderer.InitRendering(_renderData);
                     renderer.EndRendering();
                     availableRenderers.Add(renderer);
                 }
@@ -130,7 +119,7 @@ namespace dotNES
             emu = new Emulator(rom, _controller1, _controller2);
             _renderThread = new Thread(() =>
             {
-                gameStarted = true;
+                _renderData.gameStarted = true;
                 Console.WriteLine(emu.Cartridge);
                 Stopwatch s = new Stopwatch();
                 Stopwatch s0 = new Stopwatch();
@@ -147,8 +136,8 @@ namespace dotNES
                     {
                         s0.Restart();
                         emu.PPU.ProcessFrame();
-                        rawBitmap = emu.PPU.RawBitmap;
-                        Invoke((MethodInvoker)_renderer.Draw);
+                        _renderData.rawBitmap = emu.PPU.RawBitmap;
+                        Invoke((MethodInvoker)_renderData._renderer.Draw);
                         s0.Stop();
                         Thread.Sleep(Math.Max((int)(980 / 60.0 - s0.ElapsedMilliseconds), 0) / activeSpeed);
                     }
@@ -168,13 +157,13 @@ namespace dotNES
         //set screencapture on click of screenshot option
         private void Screenshot()
         {
-            var bitmap = new Bitmap(GameWidth, GameHeight, PixelFormat.Format32bppArgb);
+            var bitmap = new Bitmap(RenderData.GameWidth, RenderData.GameHeight, PixelFormat.Format32bppArgb);
 
-            for (int y = 0; y < GameHeight; y++)
+            for (int y = 0; y < RenderData.GameHeight; y++)
             {
-                for (int x = 0; x < GameWidth; x++)
+                for (int x = 0; x < RenderData.GameWidth; x++)
                 {
-                    bitmap.SetPixel(x, y, Color.FromArgb((int)(rawBitmap[y * GameWidth + x] | 0xff000000)));
+                    bitmap.SetPixel(x, y, Color.FromArgb((int)(_renderData.rawBitmap[y * RenderData.GameWidth + x] | 0xff000000)));
                 }
             }
 
@@ -202,16 +191,16 @@ namespace dotNES
                     suspended = true;
                     break;
                 default:
-                    _controller1.PressKey(e);
-                    _controller2.PressKey(e);
+                    _controller1.PressKey((int)e.KeyCode);
+                    _controller2.PressKey((int)e.KeyCode);
                     break;
             }
         }
 
         private void UI_KeyUp(object sender, KeyEventArgs e)
         {
-            _controller1.ReleaseKey(e);
-            _controller2.ReleaseKey(e);
+            _controller1.ReleaseKey((int)e.KeyCode);
+            _controller2.ReleaseKey((int)e.KeyCode);
         }
 
         private void UI_MouseClick(object sender, MouseEventArgs e)
@@ -227,23 +216,23 @@ namespace dotNES
                         foreach (var renderer in availableRenderers)
                         {
                             self.Add(new RadioItem(renderer.RendererName, y => {
-                                y.Checked = renderer == _renderer;
+                                y.Checked = renderer == _renderData._renderer;
                                 y.Click += delegate { SetRenderer(renderer); };
                             }));
                         }
                     }),
                     new Item("Filter", x =>
                     {
-                        var filters = new Dictionary<string, FilterMode>()
+                        var filters = new Dictionary<string, RenderData.FilterMode>()
                         {
-                            {"None", FilterMode.NearestNeighbor},
-                            {"Linear", FilterMode.Linear},
+                            {"None", RenderData.FilterMode.NearestNeighbor},
+                            {"Linear", RenderData.FilterMode.Linear},
                         };
                         foreach (var filter in filters)
                             x.Add(new RadioItem(filter.Key, y =>
                             {
-                                y.Checked = filter.Value == _filterMode;
-                                y.Click += delegate { _filterMode = filter.Value; };
+                                y.Checked = filter.Value == _renderData._filterMode;
+                                y.Click += delegate { _renderData._filterMode = filter.Value; };
                             }));
                     }),
                     new SeparatorItem(),

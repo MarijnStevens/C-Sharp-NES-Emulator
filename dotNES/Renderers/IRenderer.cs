@@ -6,7 +6,7 @@
 
         void Draw();
 
-        void InitRendering(UI ui);
+        void InitRendering(RenderData renderData);
 
         void EndRendering();
     }

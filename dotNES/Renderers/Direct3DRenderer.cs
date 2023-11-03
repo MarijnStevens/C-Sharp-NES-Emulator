@@ -21,17 +21,18 @@ namespace dotNES.Renderers
         Bitmap gameBitmap;
         RawRectangleF clientArea;
 
-        private UI _ui;
+        private RenderData _renderData;
         private readonly Object _drawLock = new Object();
 
         public string RendererName => "Direct3D";
 
-        public void InitRendering(UI ui)
+        public void InitRendering(RenderData renderData)
         {
             lock (_drawLock)
             {
-                if (ui == null) return;
-                _ui = ui;
+                if (renderData == null) return;
+                this._renderData = renderData; ;
+
                 ResizeRedraw = true;
                 var desc = new SwapChainDescription
                 {
@@ -65,7 +66,7 @@ namespace dotNES.Renderers
                     new RenderTargetProperties(new PixelFormat(Format.Unknown, AlphaMode.Premultiplied)));
 
                 var bitmapProperties = new BitmapProperties(new PixelFormat(Format.B8G8R8A8_UNorm, AlphaMode.Ignore));
-                gameBitmap = new Bitmap(d2dRenderTarget, new Size2(UI.GameWidth, UI.GameHeight), bitmapProperties);
+                gameBitmap = new Bitmap(d2dRenderTarget, new Size2(RenderData.GameWidth, RenderData.GameHeight), bitmapProperties);
 
                 clientArea = new RawRectangleF
                 {
@@ -78,7 +79,7 @@ namespace dotNES.Renderers
                 factory.Dispose();
                 surface.Dispose();
                 backBuffer.Dispose();
-                _ui.ready = true;
+                _renderData.ready = true;
             }
         }
 
@@ -91,9 +92,10 @@ namespace dotNES.Renderers
         {
             lock (_drawLock)
             {
-                if (_ui != null && _ui.ready)
+                if (_renderData != null && _renderData.ready)
                 {
-                    _ui.ready = false;
+                    _renderData.ready = false;
+
                     d2dRenderTarget.Dispose();
                     swapChain.Dispose();
                     device.Dispose();
@@ -107,7 +109,7 @@ namespace dotNES.Renderers
             try
             {
                 DisposeDirect3D();
-                InitRendering(_ui);
+                InitRendering(_renderData);
                 base.OnResize(e);
             }
             catch
@@ -123,17 +125,17 @@ namespace dotNES.Renderers
         {
             lock (_drawLock)
             {
-                if (_ui == null || d2dRenderTarget == null || !_ui.ready) return;
+                if (_renderData == null || d2dRenderTarget == null || !_renderData.ready) return;
                 d2dRenderTarget.BeginDraw();
                 d2dRenderTarget.Clear(Color.Gray);
 
-                if (_ui.gameStarted)
+                if (_renderData.gameStarted)
                 {
-                    int stride = UI.GameWidth * 4;
-                    gameBitmap.CopyFromMemory(_ui.rawBitmap, stride);
+                    int stride = RenderData.GameWidth * 4;
+                    gameBitmap.CopyFromMemory(_renderData.rawBitmap, stride);
 
                     d2dRenderTarget.DrawBitmap(gameBitmap, clientArea, 1f,
-                        _ui._filterMode == UI.FilterMode.Linear
+                        _renderData._filterMode == RenderData.FilterMode.Linear
                             ? BitmapInterpolationMode.Linear
                             : BitmapInterpolationMode.NearestNeighbor);
                 }

@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace dotNES.Controllers
 {
-    class NES001Controller : IController
+    public class NES001Controller : IController
     {
         private int data;
         private int serialData;
@@ -34,19 +34,19 @@ namespace dotNES.Controllers
             return ret;
         }
 
-        public void PressKey(KeyEventArgs e)
+        public void PressKey(int keyCode)
         {
-            var key = keyset[e.KeyCode];
+            var key = keyset[keyCode];
             if (key >= 0)
             {
                 data |= 1 << key;
             }
         }
 
-        public void ReleaseKey(KeyEventArgs e)
+        public void ReleaseKey(int keyCode)
         {
 
-            var key = keyset[e.KeyCode];
+            var key = keyset[keyCode];
             if (key >= 0)
             {
                 data &= ~(1 << key);

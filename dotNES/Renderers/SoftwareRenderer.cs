@@ -9,17 +9,16 @@ namespace dotNES.Renderers
 {
     class SoftwareRenderer : Control, IRenderer
     {
-        private UI _ui;
+        private RenderData _renderData;
         private Bitmap _gameBitmap;
         private GCHandle _rawBitmap;
 
         public string RendererName => "Software";
 
-        public void InitRendering(UI ui)
+        public void InitRendering(RenderData renderData)
         {
-            if (ui == null) return;
-            _ui = ui;
-
+            if (renderData == null) return;
+            _renderData = renderData;
 
             BackColor = Color.Gray;
             DoubleBuffered = true;
@@ -32,7 +31,7 @@ namespace dotNES.Renderers
 
         protected override void OnResize(EventArgs e)
         {
-            InitRendering(_ui);
+            InitRendering(_renderData);
             base.OnResize(e);
         }
 
@@ -42,8 +41,8 @@ namespace dotNES.Renderers
 
             if (_rawBitmap.IsAllocated) _rawBitmap.Free();
 
-            _rawBitmap = GCHandle.Alloc(_ui.rawBitmap, GCHandleType.Pinned);
-            _gameBitmap = new Bitmap(UI.GameWidth, UI.GameHeight, UI.GameWidth * 4, PixelFormat.Format32bppPArgb, _rawBitmap.AddrOfPinnedObject());
+            _rawBitmap = GCHandle.Alloc(_renderData.rawBitmap, GCHandleType.Pinned);
+            _gameBitmap = new Bitmap(RenderData.GameWidth, RenderData.GameHeight, RenderData.GameWidth * 4, PixelFormat.Format32bppPArgb, _rawBitmap.AddrOfPinnedObject());
 
             Invalidate();
             Update();
@@ -52,11 +51,14 @@ namespace dotNES.Renderers
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            if (_gameBitmap == null || _ui == null || !_ui.gameStarted) return;
+            if (_gameBitmap == null || _renderData == null || !_renderData.gameStarted) return;
 
             Graphics _renderTarget = e.Graphics;
             _renderTarget.CompositingMode = CompositingMode.SourceCopy;
-            _renderTarget.InterpolationMode = _ui._filterMode == UI.FilterMode.Linear ? InterpolationMode.Bilinear : InterpolationMode.NearestNeighbor;
+            _renderTarget.InterpolationMode = _renderData._filterMode == RenderData.FilterMode.Linear 
+                ? InterpolationMode.Bilinear 
+                : InterpolationMode.NearestNeighbor;
+
             _renderTarget.DrawImage(_gameBitmap, 0, 0, Size.Width, Size.Height);
         }
     }
