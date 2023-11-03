@@ -1,14 +1,12 @@
-﻿//set interface for controller
-namespace dotNES.Controllers
+﻿namespace dotNES.Controllers;
+
+public interface IController
 {
-    interface IController
-    {
-        void Strobe(bool on);
+    void Strobe(bool on);
 
-        int ReadState();
+    int ReadState();
 
-        void PressKey(int keyCode);
+    void PressKey(int keyCode);
 
-        void ReleaseKey(int keyCode);
-    }
+    void ReleaseKey(int keyCode);
 }

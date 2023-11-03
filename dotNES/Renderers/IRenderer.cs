@@ -1,13 +1,12 @@
-﻿namespace dotNES.Renderers
+﻿namespace dotNES.Renderers;
+
+public interface IRenderer
 {
-    public interface IRenderer
-    {
-        string RendererName { get; }
+    string RendererName { get; }
 
-        void Draw();
+    void Draw();
 
-        void InitRendering(RenderData renderData);
+    void InitRendering(RenderData renderData);
 
-        void EndRendering();
-    }
+    void EndRendering();
 }

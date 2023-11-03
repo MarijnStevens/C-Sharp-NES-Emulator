@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Weavers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FodyWeavers.xsd">
+  <Costura>
+    <IncludeAssemblies>
+      dotNES.Core
+      dotNES.Renderers.Direct3D
+      SharpDX
+      SharpDX.Direct2D1
+      SharpDX.Direct3D11
+      SharpDX.DXGI
+      SharpDX.Mathematics
+    </IncludeAssemblies>
+  </Costura>
+</Weavers>

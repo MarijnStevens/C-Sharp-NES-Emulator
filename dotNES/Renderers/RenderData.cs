@@ -1,21 +1,20 @@
-﻿using dotNES.Renderers;
+﻿namespace dotNES.Renderers;
 
-namespace dotNES
+public class RenderData
 {
-    public class RenderData
+    public const int GameWidth = 256;
+    public const int GameHeight = 240;
+
+    public IRenderer? _renderer;
+
+    public enum FilterMode
     {
-        public enum FilterMode
-        {
-            NearestNeighbor, Linear
-        }
+        NearestNeighbor, Linear
+    }    
+    public FilterMode _filterMode = FilterMode.Linear;
 
-        public FilterMode _filterMode = FilterMode.Linear;
+    public uint[] rawBitmap = new uint[GameWidth * GameHeight];
 
-        public IRenderer _renderer;
-        public const int GameWidth = 256;
-        public const int GameHeight = 240;
-        public uint[] rawBitmap = new uint[GameWidth * GameHeight];
-        public bool ready;
-        public bool gameStarted;
-    }
+    public bool ready;
+    public bool gameStarted;
 }

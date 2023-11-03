@@ -2,27 +2,26 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace dotNES
+namespace dotNES;
+
+static class Utility
 {
-    static class Utility
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static unsafe byte AsByte(this bool to) => *(byte*)&to;
+
+    public static void Fill<T>(this T[] arr, T value)
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe byte AsByte(this bool to) => *((byte*)&to);
-
-        public static void Fill<T>(this T[] arr, T value)
+        for (int i = 0; i < arr.Length; i++)
         {
-            for (int i = 0; i < arr.Length; i++)
-            {
-                arr[i] = value;
-            }
+            arr[i] = value;
         }
+    }
 
-        public static void Map<T>(this IEnumerable<T> enumerator, Action<T> go)
+    public static void Map<T>(this IEnumerable<T> enumerator, Action<T> go)
+    {
+        foreach (var e in enumerator)
         {
-            foreach (var e in enumerator)
-            {
-                go(e);
-            }
+            go(e);
         }
     }
 }

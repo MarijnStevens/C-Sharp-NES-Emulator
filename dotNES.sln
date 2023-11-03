@@ -1,26 +1,47 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.16
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotNES", "dotNES\dotNES.csproj", "{B468ED13-F98C-4ADF-B3F9-F87396E17A51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotNES.Win32", "dotNES.Win32\dotNES.Win32.csproj", "{2F4AFE18-5D84-41A3-92D1-0BF4F3D5D38A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotNES.Renderers.Direct3D", "dotNES.Renderers.Direct3D\dotNES.Renderers.Direct3D.csproj", "{7B2F3CFE-6A8D-43F8-87A3-EB2E29AA868B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotNES.Renderer.OpenGL", "dotNES.Renderer.OpenGL\dotNES.Renderer.OpenGL.csproj", "{B6BFA2F3-7A8C-4FC6-9895-D8C0C58FC896}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotNES", "dotNES\dotNES.csproj", "{FFD4E17A-CEBE-4D48-99AE-06DB33E99293}"
 EndProject
 Global
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B468ED13-F98C-4ADF-B3F9-F87396E17A51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B468ED13-F98C-4ADF-B3F9-F87396E17A51}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B468ED13-F98C-4ADF-B3F9-F87396E17A51}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B468ED13-F98C-4ADF-B3F9-F87396E17A51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F4AFE18-5D84-41A3-92D1-0BF4F3D5D38A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F4AFE18-5D84-41A3-92D1-0BF4F3D5D38A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F4AFE18-5D84-41A3-92D1-0BF4F3D5D38A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F4AFE18-5D84-41A3-92D1-0BF4F3D5D38A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B2F3CFE-6A8D-43F8-87A3-EB2E29AA868B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B2F3CFE-6A8D-43F8-87A3-EB2E29AA868B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B2F3CFE-6A8D-43F8-87A3-EB2E29AA868B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B2F3CFE-6A8D-43F8-87A3-EB2E29AA868B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6BFA2F3-7A8C-4FC6-9895-D8C0C58FC896}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6BFA2F3-7A8C-4FC6-9895-D8C0C58FC896}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6BFA2F3-7A8C-4FC6-9895-D8C0C58FC896}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6BFA2F3-7A8C-4FC6-9895-D8C0C58FC896}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFD4E17A-CEBE-4D48-99AE-06DB33E99293}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFD4E17A-CEBE-4D48-99AE-06DB33E99293}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFD4E17A-CEBE-4D48-99AE-06DB33E99293}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFD4E17A-CEBE-4D48-99AE-06DB33E99293}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {40E527BD-D872-4812-A070-E48AAA12C713}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true
